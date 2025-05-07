@@ -1,0 +1,197 @@
+<head>{% load static %}</head>
+<style>
+    .star-rating {
+        display: inline-block;
+        direction: rtl; /* Important to make stars go left to right */
+    }
+    
+    .star-rating input[type="radio"] {
+        display: none; /* Hide the radio buttons */
+    }
+    
+    .star-rating label {
+        display: inline-block;
+        cursor: pointer;
+        font-size: 2em;
+        color: #ddd; /* Unselected stars */
+    }
+    
+    .star-rating label:before {
+        content: "★"; /* Unicode star character */
+    }
+    
+    .star-rating input[type="radio"]:checked ~ label {
+        color: #ffc107; /* Selected and preceding stars */
+    }
+    
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffed85; /* Hover color */
+    }
+    </style>
+<div id="part-details" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+    <button onclick="showAllParts()" style="margin-bottom: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>    
+    <h2 style="color: #333; margin-bottom: 15px;">{{ part.brand }}  {{ part.name }}</h2>
+    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+        <img src="{{ part.image.url }}" alt="Part Image" style="width: 250px; height: 250px; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); margin-right: 20px;">
+        <div>
+            <p style="margin-bottom: 8px;"><strong>Brand:</strong> <span style="color: #555;">{{ part.brand }}</span></p>
+            <p style="margin-bottom: 8px;"><strong>Price:</strong> <span style="color: #28a745;">₹{{ part.price }}</span></p>            
+            <p style="margin-bottom: 15px;"><strong>Average Rating:</strong> <span id="selected-part-rating" style="color: #ffc107; font-size: 18px; font-weight: bold;" >{{ avg_rating }}</span> ⭐</p>
+            {% if user.is_authenticated %}
+            <div class="rating-section">
+                <form id="rating-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="part_model" value="{{ part.model }}">
+                    <label for="rating">Rate {{ part.brand }}  {{ part.name }}:</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 stars"></label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars"></label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars"></label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars"></label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star"></label>
+                    </div>
+                    <button type="submit"style="margin-bottom: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Submit Rating</button>
+                </form>
+            </div>
+            {% else %}
+                <p><a href="{% url 'login' %}" style="color: #007bff; text-decoration: none; transition: color 0.3s ease;">Log in</a> to rate this part.</p>
+            {% endif %}            
+            <input type="hidden" id="selected-category" value="{{ selected_category }}">            
+            <input type="hidden" id="selected-part-id" value="{{ part.id }}">
+            
+            <p><h5><b>Detailed Specification</b></h5></p>    
+            {% if part.cores %}
+                <p><strong>Cores:</strong> {{ part.cores }}</p>
+                <p><strong>Threads:</strong> {{ part.threads }}</p>
+                <p><strong>Clock Speed:</strong> {{ part.clock_speed }} GHz</p>
+                <p><strong>TDP:</strong> {{ part.tdp }}</p>
+                <p><strong>CPU_socket:</strong> {{ part.CPU_socket }}</p>
+            {% elif part.memory %}
+                <p><strong>Memory:</strong> {{ part.memory }} GB</p>
+                <p><strong>ROPs:</strong> {{ part.rop }} ROPs</p>              
+            {% elif part.size %}
+                <p><strong>Size:</strong> {{ part.size }} GB</p>
+                <p><strong>read_speed:</strong> {{ part.read_speed }} MB/s</p>
+                <p><strong>write_speed:</strong> {{ part.write_speed }} MB/s</p>
+                <p><strong>generation:</strong> {{ part.generation }}</p>
+            {% elif part.capacity %}
+                <p><strong>capacity:</strong> {{ part.capacity }} GB</p>
+                <p><strong>speed:</strong> {{ part.speed }}GHz</p>
+                <p><strong>type:</strong> {{ part.type }}</p>
+            {% elif part.socket_type %}
+                <p><strong>socket_type:</strong> {{ part.socket_type }}</p>
+                <p><strong>Supported RAM TYPE:</strong> {{ part.RAM_Type }}</p>             
+            {% endif %}
+            <p><strong>Watts:</strong> {{ part.watt }} Watts</p>
+            <p><strong>Description:</strong> <span id="part-description">{{ part.description }}</span></p>
+            <a href="{{ part.product_link }}" target="_blank" rel="noopener noreferrer"> 
+                <img src="{% static 'images/link.png' %}" style="height: 60px; width: 60px;">
+            </a>
+            
+
+            
+
+        </div>
+    </div>
+
+    <div id="review-section" style="margin-top: 30px;">
+        <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; color: #333;">Reviews</h3>
+
+        <div id="reviews-list" style="margin-top: 20px;">
+            {% for review in reviews %}
+                <div class="review-item" style="border: 1px solid #e0e0e0; padding: 18px; margin-bottom: 15px; border-radius: 8px; background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);">
+                    <strong style="display: block; margin-bottom: 8px; color: #333;">{{ review.user.username }}</strong> <small style="color: #777;">{{ review.created_at|date:"Y-m-d H:i" }}</small>
+                    <p style="margin-top: 8px; color: #555;">{{ review.content }}</p>
+                </div>
+            {% empty %}
+                <p style="color: #888;">No reviews yet. Be the first to review!</p>
+            {% endfor %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <form id="review-form" style="margin-top: 20px;">
+            {% csrf_token %}
+            <textarea name="content" placeholder="Write your review..." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; resize: vertical;"></textarea>
+            <input type="hidden" name="part_model" value="{{ part.model }}">
+            <input type="hidden" name="category" value="{{ category }}">
+            <button type="submit" style="padding: 12px 25px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Submit Review</button>
+        </form>
+        {% else %}
+            <p><a href="{% url 'login' %}" style="color: #007bff; text-decoration: none; transition: color 0.3s ease;">Log in</a> to write a review.</p>
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function setupReviewForm() {
+            const reviewForm = document.getElementById("review-form");
+            if (!reviewForm) return;
+
+            reviewForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let formData = new FormData(reviewForm);
+                let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+                fetch("{% url 'submit_review' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let newReview = document.createElement("div");
+                        newReview.classList.add("review-item");
+                        newReview.innerHTML = `
+                            <strong style="display: block; margin-bottom: 8px; color: #333;">${data.user}</strong> - <small style="color: #777;">${data.date}</small>
+                            <p style="margin-top: 8px; color: #555;">${data.content}</p>
+                        `;
+                        document.getElementById("reviews-list").prepend(newReview);
+                        reviewForm.reset();
+                    } else {
+                        alert("Error submitting review: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error submitting review:", error));
+            });
+        }
+
+        function showPartDetails(partId, category) {
+            fetch(`/part-details/${category}/${partId}/`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("part-details").innerHTML = html;
+                    document.getElementById("part-details").style.display = "block";
+                    document.getElementById("part-container").style.display = "none";
+
+                    setTimeout(() => {
+                        setupRatingForm();
+                        setupReviewForm();
+                    }, 100);
+                })
+                .catch(error => console.error("Error loading part details:", error));
+        }
+
+        setupReviewForm();
+    });
+    
+    document.addEventListener("DOMContentLoaded", function() {
+            let element = document.getElementById("part-description");
+            let formattedText = element.innerText.replace(/\/\//g, "<br>");
+            element.innerHTML = formattedText;
+        });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+        let element = document.getElementById("part-description");
+        let formattedText = element.innerText.replace(/\/\//g, "<br>"); // Replace '//' with <br>
+        element.innerHTML = formattedText; // Update content
+    });
+</script>
+

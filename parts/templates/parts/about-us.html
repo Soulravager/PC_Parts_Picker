@@ -1,0 +1,462 @@
+<!-- Price box minimal--><!DOCTYPE html>
+<html class="wide wow-animation" lang="en">
+  <head>
+    {% load static %}
+    <title>About Us</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .ie-panel {
+            display: none;
+            background: #212121;
+            padding: 10px 0;
+            box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
+            clear: both;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        html.ie-10 .ie-panel,
+        html.lt-ie-10 .ie-panel {
+            display: block;
+        }
+    </style>
+</head>
+
+  <body>
+    <div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="{% static 'images/ie8-panel/warning_bar_0000_us.jpg' %}" alt="Warning Bar" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <div class="preloader">
+      <div class="preloader-body">
+        <div class="cssload-container">
+          <div class="cssload-speeding-wheel"></div>
+        </div>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <div class="page">
+<!-- Page Header-->
+<header class="section page-header">
+  <!-- RD Navbar-->
+  <div class="rd-navbar-wrap">
+    <nav class="rd-navbar rd-navbar-wide" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+      <div class="rd-navbar-main-outer">
+        <div class="rd-navbar-main">
+          <!-- RD Navbar Panel-->
+          <div class="rd-navbar-panel">
+            <!-- RD Navbar Toggle-->
+            <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+            <!-- RD Navbar Brand-->
+            <div class="rd-navbar-brand">
+              <a class="brand" href="{% url 'index' %}">
+                <img class="brand-logo-dark" src="{% static 'images/logo-default-261x72.png' %}" alt="" width="261" height="72" srcset="{% static 'images/logo-default-261x72.png' %} 2x"/>
+                <img class="brand-logo-light" src="{% static 'images/logo-inverse-133x45.png' %}" alt="" width="133" height="45" srcset="{% static 'images/logo-inverse-266x90.png' %} 2x"/>
+              </a>
+            </div>
+          </div>
+
+          <div class="rd-navbar-nav-wrap">
+            <!-- RD Navbar Nav-->
+            <ul class="rd-navbar-nav">
+              <li class="rd-nav-item active"><a class="rd-nav-link" href="{% url 'index' %}">Home</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'pcbuild' %}">Builder</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href='/parts/'>PC Parts</a></li>
+              <!--li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'about_us' %}">About</a></li-->
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'contacts' %}">Contacts</a></li>
+
+              {% if user.is_authenticated %}
+              <li class="rd-nav-item" style="position: relative;">
+                  <div class="user-info-box" style="display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="toggleDropdown()">
+                      {% if request.user.profile.profile_picture %}
+                          <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                      {% else %}
+                          <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                      {% endif %}
+                      <span style="margin-top: 15px;">{{ user.username }}</span>
+                  </div>
+                  <div id="user-dropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; padding: 10px; width: 150px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                      <a href="{% url 'profile' %}" class="dropdown-item">Manage Profile</a>
+          
+                      {% if user.is_staff %}
+                          <a href="{% url 'staff_dashboard' %}" class="dropdown-item" style="color: #28a745; font-weight: bold;">Staff Panel</a>
+                      {% endif %}
+          
+                      <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                          {% csrf_token %}
+                          <button type="submit" style="background: none; border: none; padding: 0; color: #007bff;">Logout</button>
+                      </form>
+                  </div>
+              </li>
+          {% else %}
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'login' %}">Login</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'signup' %}">Sign up</a></li>
+          {% endif %}
+          
+          <script>
+          function toggleDropdown() {
+              var dropdown = document.getElementById("user-dropdown");
+              dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+          }
+          
+          // Close dropdown when clicking outside
+          document.addEventListener("click", function(event) {
+              var dropdown = document.getElementById("user-dropdown");
+              var userInfoBox = document.querySelector(".user-info-box");
+          
+              if (!userInfoBox.contains(event.target) && dropdown.style.display === "block") {
+                  dropdown.style.display = "none";
+              }
+          });
+          </script>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("user-dropdown");
+    if (dropdown.style.display === "none" || dropdown.style.display === "") {
+      dropdown.style.display = "block";
+    } else {
+      dropdown.style.display = "none";
+    }
+  }
+</script>
+
+      <section class="breadcrumbs-custom bg-image context-dark" style="background-image: url('{% static 'images/aboutbg.jpg' %}')">
+        <div class="container">
+          <h2 class="breadcrumbs-custom-title">About Us</h2>
+          <div class="breadcrumbs-custom-subtitle">Welcome to PCPartsPicker, a labor of love and dedication inspired by the desire to empower fellow Indians in the exciting world of PC building. We are more than just a website; we are a group of people that thrives on a shared passion for technology and innovation.</div>
+        </div>
+      </section>
+      <!-- Branding>
+      <section class="section section-lg bg-default section-lined">
+        <div class="container container-custom-width">
+          <h3 class="text-center">Portfolio</h3>
+          <div class="row row-custom-width row-30 row-xxl-100 row-flex">
+            <div class="col-sm-6 col-lg-4 wow fadeInRight">
+              <div class="project-grid" style="background-image: url(images/projects-1-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">WTC Publishing</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 wow fadeInRight" data-wow-delay="0.2s">
+              <div class="project-grid" style="background-image: url(images/projects-2-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">RDA Shoewear</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 wow fadeInRight" data-wow-delay="0.4s">
+              <div class="project-grid" style="background-image: url(images/projects-3-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">Inter restaurant</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 wow fadeInRight" data-wow-delay="0.2s">
+              <div class="project-grid" style="background-image: url(images/projects-4-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">Create Co.</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 wow fadeInRight" data-wow-delay="0.4s">
+              <div class="project-grid" style="background-image: url(images/projects-5-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">iStep Ltd.</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 wow fadeInRight" data-wow-delay="0.6s">
+              <div class="project-grid" style="background-image: url(images/projects-6-518x373.jpg);">
+                <div class="inner"><img src="{% static 'images/projects-logo-250x96.png' %}" alt="" width="250" height="96"/>
+                  <h5 class="title"><a href="#">Architex</a></h5>
+                  <p class="exeption">We design incredibly creative websites for all our customers located worldwide.</p><a class="button button-light" href="#">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="button-wrap-1 text-center"><a class="button button-default" href="#">All projects</a></div>
+        </div>
+      </section-->
+      <!-- Team-->
+      <section class="section section-lg bg-default">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <h3 class="text-center">Our Team</h3>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row row-15 row-gutter-14">
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-1.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title">Ian Somerhalder</div>
+                  <p class="position">Senior Designer</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-2.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title"> Keanu Reeves</div>
+                  <p class="position">Lead Developer</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-3.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title">Rowan Atkinson</div>
+                  <p class="position">Designer</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-4.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title">Tom Cruise</div>
+                  <p class="position">UX Designer</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-5.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title">Sam Lee</div>
+                  <p class="position">Developer</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+              <div class="box-team"><img src="{% static 'images/team-6.jpg' %}" alt="" width="180" height="132"/>
+                <div class="meta">
+                  <div class="heading-6 title">cillian murphy</div>
+                  <p class="position">Marketing manager</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Our clients-->
+      <section class="section section-lg section-bottom-0 bg-default section-lined">
+        <div class="container container-lined">
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="box-grid-wrap">
+            <div class="row no-gutters">
+              <div class="col-md-6 col-lg-4">
+                <div class="row no-gutters flex-md-column-reverse">
+                  <div class="col-md-12">
+                    <div class="box-counter-custom">
+                      <div class="counter" style="background-image: url('{% static 'images/bg-image-41.jpg' %}')">6</div>
+                      <div class="title">years of experience</div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="row no-gutters"><a class="col-6 col-md-6 box-border" href="#"><img src="{% static 'images/brand-1.png' %}" alt="" width="108" height="66"/></a><a class="col-6 col-md-6 box-border" href="#">
+                      <img src="{% static 'images/brand-2.png' %}" alt="" width="168" height="39"/></a></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4 align-items-start">
+                <div class="row no-gutters"><a class="col-6 col-md-6 box-border" href="#"><img src="{% static 'images/brand-3.png' %}" alt="" width="119" height="64"/>
+                </a><a class="col-6 col-md-6 box-border" href="#"><img src="{% static 'images/brand-4.jpg' %}" alt="" width="140" height="59"/></a>
+                <a class="col-6 col-md-6 box-border" href="#"><img src="{% static 'images/brand-5.png' %}" alt="" width="154" height="33"/></a>
+                <a class="col-6 col-md-6 box-border" href="#"><img src="{% static 'images/brand-6.png' %}" alt="" width="122" height="80"/></a>
+                <a class="col-12 box-border box-border-1" href="#">
+                    <div class="icon icon-sm mdi mdi-arrow-right"></div></a></div>
+              </div>
+              <div class="col-lg-4 box-wrapper-1">
+                <div class="heading-3 title">Our clients</div>
+                <p>We work with lots of corporate customers located worldwide.</p>
+                <p>Some of our clients became our partners and joined our business loyalty program that allows getting more from our solutions.</p>
+                <!--div class="img-wrap-1"><img src="{% static 'images/speaker-2-180x70.png' %}" alt="" width="180" height="70"/-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Branding-->
+      <section class="section section-lg bg-gray-700 text-center text-sm-left">
+        <div class="container">
+          <div class="row row-40">
+            <div class="col-lg-9">
+              <div class="row row-30 row-xxl-85">
+                <div class="col-sm-6 col-md-4">
+                  <h5>Building</h5>
+                  <ul class="list-xs">
+                    <li><a class="link-item" href="#">Logo Design</a></li>
+                    <li><a class="link-item" href="#">Branding Strategy</a></li>
+                    <li><a class="link-item" href="#">Packaging</a></li>
+                  </ul>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <h5>Marketing</h5>
+                  <ul class="list-xs">
+                    <li><a class="link-item" href="#">Online Marketing</a></li>
+                    <li><a class="link-item" href="#">Email Marketing</a></li>
+                    <li><a class="link-item" href="#">SEO</a></li>
+                  </ul>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <h5>Tech Support</h5>
+                  <ul class="list-xs">
+                    <li><a class="link-item" href="#">Landing Pages</a></li>
+                    <li><a class="link-item" href="#">Websites</a></li>
+                    <li><a class="link-item" href="#">Mobile Apps</a></li>
+                  </ul>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <article class="box-counter">
+                    <div class="box-counter-main">
+                      <div class="counter">20</div><span class="small small_top">+</span>
+                    </div>
+                    <div class="box-counter-title">Custom builds</div>
+                  </article>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <article class="box-counter">
+                    <div class="box-counter-main">
+                      <div class="counter">849</div>
+                    </div>
+                    <div class="box-counter-title">Finished builds</div>
+                  </article>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <article class="box-counter">
+                    <div class="box-counter-main">
+                      <div class="counter">19</div><span class="small small_top">+</span>
+                    </div>
+                    <div class="box-counter-title">Month's of experience</div>
+                  </article>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="heading-3">What we do</div>
+              <div class="big">we are a group of people that thrives on a shared passion for technology and innovation.</div>
+              <div class="img-wrap-1"><img src="{% static 'images/logo-inverse-133x45.png' %}" alt="" width="180" height="80"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page Footer-->
+      <div class="pre-footer-classic bg-gray-700 context-dark">
+        <div class="container">
+          <div class="row row-30 justify-content-lg-between">
+            <div class="col-sm-6 col-lg-3 col-xl-3">
+              <h5>Location</h5>
+              <ul class="list list-sm">
+                <li>
+                  <p>Thrissur</p>
+                </li>
+                <li>
+                  <p>Kerala</p>
+                </li>
+                <li>
+                  <p>680 501</p>
+                </li>
+                <li>
+                  <p>India</p>
+                </li>
+              </ul>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+              <h5>Contacts</h5>
+              <dl class="list-terms-custom">
+                <dt>Ph.</dt>
+                <dd><a class="link-default" href="tel:#">04885 296929</a></dd>
+              </dl>
+              <dl class="list-terms-custom">
+                <dt>Mail.</dt>
+                <dd><a class="link-default" href="mailto:#">iamalwinkj@gmail.com</a></dd>
+              </dl>
+              <ul class="list-inline list-inline-sm">
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-facebook" href="https://www.facebook.com/SoulRavanger/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-instagram" href="https://www.instagram.com/soul_ravager/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-behance" href="https://x.com/Soul_Ravager"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-twitter" href="https://x.com/Soul_Ravager"></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-4">
+              <h5>Newsletter</h5>
+              <form class="rd-form rd-mailform" id="newsletter-form">
+                <div class="form-wrap form-wrap-icon">
+                    <div class="form-icon mdi mdi-email-outline"></div>
+                    <input class="form-input" id="footer-email" type="email" name="email" required>
+                    <label class="form-label" for="footer-email">E-mail</label>
+                </div>
+                <div class="button-wrap">
+                    <button class="button button-default button-invariable" type="submit">Subscribe</button>
+                </div>
+            </form>
+            <script>
+            document.getElementById("newsletter-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                let formData = new FormData(this);
+            
+                fetch("/newsletter-subscribe/", {  // Make sure this URL matches your Django URLs
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error("Error:", error));
+            });
+            </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="section footer-classic context-dark text-center">
+        <div class="container">
+          <div class="row row-15 justify-content-lg-between">
+            <div class="col-lg-6 col-xl-6 text-lg-left">
+              <p class="rights"><span>&copy;&nbsp;</span><span class="copyright-year"></span>. All Rights Reserved. Design by <a href="https://www.facebook.com/SoulRavanger/">Alwin</a></p>
+            </div>
+            <div class="col-lg-6 col-xl-6">
+              <ul class="list-inline list-inline-lg text-uppercase">
+                <li><a href="about-us.html">About us</a></li>
+                <li><a href="#">Our Team</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <div class="snackbars" id="form-output-global"></div>
+    <script src="{% static 'js/core.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>

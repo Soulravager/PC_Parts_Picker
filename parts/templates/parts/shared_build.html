@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ build.name }} - Shared Build</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 750px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .profile-section img {
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            border: 3px solid #007bff;
+        }
+        .build-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .component {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .component:hover {
+            transform: scale(1.02);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        .component img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+        }
+        .component-details {
+            flex: 1;
+        }
+        .component-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2ecc71;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ build.name }}</h2>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <img src="{{ build.user.profile.profile_picture.url }}" alt="Profile Picture">
+            <div>
+                <p><strong>Created by:</strong> {{ build.user.username }}</p>
+                <p><strong>Created on:</strong> {{ build.created_at|date:"F j, Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Build Components -->
+        <div class="build-info">
+            <!-- CPU -->
+            <div class="component">
+                <img src="{{ build.cpu.image.url }}" alt="CPU Image">
+                <div class="component-details">
+                    <p class="component-title">CPU: {{ build.cpu.name }}</p>
+                    <p>{{ build.cpu.model }} - ₹{{ build.cpu.price }}</p>
+                    <a href="/parts/{{ build.cpu.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+
+            <!-- Motherboard -->
+            <div class="component">
+                <img src="{{ build.motherboard.image.url }}" alt="Motherboard Image">
+                <div class="component-details">
+                    <p class="component-title">Motherboard: {{ build.motherboard.name }}</p>
+                    <p>{{ build.motherboard.model }} - ₹{{ build.motherboard.price }}</p>
+                    <a href="/parts/{{ build.motherboard.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+
+            <!-- GPU -->
+            <div class="component">
+                <img src="{{ build.gpu.image.url }}" alt="GPU Image">
+                <div class="component-details">
+                    <p class="component-title">GPU: {{ build.gpu.name }}</p>
+                    <p>{{ build.gpu.model }} - ₹{{ build.gpu.price }}</p>
+                    <a href="/parts/{{ build.gpu.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+
+            <!-- RAM -->
+            <div class="component">
+                <img src="{{ build.ram.image.url }}" alt="RAM Image">
+                <div class="component-details">
+                    <p class="component-title">RAM: {{ build.ram.brand }} {{ build.ram.model }}</p>
+                    <p>({{ build.ram.capacity }}GB) - ₹{{ build.ram.price }}</p>
+                    <a href="/parts/{{ build.ram.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+
+            <!-- SSD -->
+            <div class="component">
+                <img src="{{ build.ssd.image.url }}" alt="SSD Image">
+                <div class="component-details">
+                    <p class="component-title">SSD: {{ build.ssd.name }}</p>
+                    <p>{{ build.ssd.model }} - ₹{{ build.ssd.price }}</p>
+                    <a href="/parts/{{ build.ssd.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+
+            <!-- PSU -->
+            <div class="component">
+                <img src="{{ build.psu.image.url }}" alt="PSU Image">
+                <div class="component-details">
+                    <p class="component-title">PSU: {{ build.psu.name }}</p>
+                    <p>{{ build.psu.model }} - ₹{{ build.psu.price }}</p>
+                    <a href="/parts/{{ build.psu.model }}" target="_blank" class="link">[About Me]</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Price -->
+        <p class="price">Total Price: ₹{{ total_price }}</p>
+    </div>
+</body>
+</html>

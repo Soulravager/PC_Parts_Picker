@@ -1,0 +1,38 @@
+/* Default Light Mode */
+body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+  
+  header {
+    background-color: #f1f1f1;
+  }
+  
+  .rd-navbar-nav .rd-nav-item a {
+    color: #000000;
+  }
+  
+  /* Dark Mode */
+  body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+  }
+  
+  header.dark-mode {
+    background-color: #333333;
+  }
+  
+  .rd-navbar-nav .rd-nav-item a.dark-mode {
+    color: #ffffff;
+  }
+  
+  /* Button to toggle mode */
+  #toggle-btn {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  

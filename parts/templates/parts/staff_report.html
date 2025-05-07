@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>{% load humanize %}     {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .summary-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .box {
+            padding: 20px;
+            background: linear-gradient(135deg, #b2b1ef, #5f5cde); /* Adjusted gradient */
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1 1 200px;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white; /* Text color for summary boxes */
+        }
+        .box strong {
+            font-size: 1.2em;
+            color: white; /* Strong text color */
+        }
+        .report-buttons, .filters {
+            margin-bottom: 25px;
+        }
+        .report-buttons button, .filters button {
+            padding: 10px 15px;
+            background-color: #5f5cde; /* Primary Color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .report-buttons button:hover, .filters button:hover {
+            background-color: #b2b1ef; /* Send Color */
+        }
+        .report-section {
+            margin-top: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e0f2f7;
+            color: #5f5cde; /* Primary Color */
+        }
+        h2 {
+            color: #5f5cde; /* Primary Color */
+            border-bottom: 2px solid #5f5cde; /* Primary Color */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .filters form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filters label {
+            margin-right: 5px;
+        }
+        .filters input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #b2b1ef; /* Send Color */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #5f5cde; /* Primary Color */
+        }
+    </style>
+</head>
+<body>
+    <header style="background: #343a40; color: white; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; 
+    position: fixed; top: 0; left: 0; width: 98%;  z-index: 1000;">
+<!-- Logo -->
+<div style="display: flex; align-items: center;">
+<a href="{% url 'index' %}" style="text-decoration: none; color: white; font-size: 24px; font-weight: bold;">
+ <img src="{% static 'images/logo-default-261x72.png' %}" alt="Logo" style="height: 50px; margin-right: 10px;">
+</a>
+</div>
+
+<!-- Navigation -->
+<nav>
+<ul style="list-style: none; margin: 0; padding: 10px; display: flex; gap: 15px;">
+ <li><a href="{% url 'index' %}" style="color: white; text-decoration: none;">Home</a></li>
+ <li><a href="/parts/" style="color: white; text-decoration: none;">PC Parts</a></li>
+ <li><a href="{% url 'admin:index' %}"  style="color: white; text-decoration: none;">⚙️ Admin Panel</a></li>
+ <li><a href="{% url 'staff_dashboard' %}" style="color: white; text-decoration: none;">Staff Dashboard</a></li>
+ 
+ 
+</ul>
+</nav>
+
+<!-- User Section -->
+{% if user.is_authenticated %}
+<div style="position: relative; cursor: pointer;" onclick="toggleDropdown()">
+ <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" 
+      alt="Profile Picture" 
+      style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; vertical-align: middle;">
+ <span>{{ user.username }}</span>
+
+ <!-- Dropdown -->
+ <div id="user-dropdown" style="display: none; position: absolute; right: 0; top: 50px; background: white; color: black; padding: 10px; border: 1px solid #ddd; width: 150px;">
+     <a href="{% url 'profile' %}" style="display: block; color: black; text-decoration: none; padding: 5px;">Manage Profile</a>
+     {% if user.is_staff %}
+         <a href="{% url 'staff_dashboard' %}" style="display: block; color: green; text-decoration: none; padding: 5px;">Staff Panel</a>
+     {% endif %}
+     <form method="post" action="{% url 'logout' %}" style="margin: 0; padding: 5px;">
+         {% csrf_token %}
+         <button type="submit" style="background: none; border: none; color: red; cursor: pointer;">Logout</button>
+     </form>
+ </div>
+</div>
+{% else %}
+<div>
+ <a href="{% url 'login' %}" style="color: white; text-decoration: none; margin-right: 10px;">Login</a>
+ <a href="{% url 'signup' %}" style="color: white; text-decoration: none;">Sign up</a>
+</div>
+{% endif %}
+</header><script>
+    function toggleDropdown() {
+    var dropdown = document.getElementById("user-dropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+    
+    document.addEventListener("click", function(event) {
+    var dropdown = document.getElementById("user-dropdown");
+    if (!event.target.closest("div[onclick='toggleDropdown()']") && dropdown.style.display === "block") {
+    dropdown.style.display = "none";
+    }
+    });
+    </script>
+<!--HEADER ENDS HERE-->
+<!--MAIN BODY-->
+<div class="main-content" style="margin-top: 3%;">
+    <a href="{% url 'staff_dashboard' %}" class="back-button">← Back to Staff Dashboard</a>
+    <div class="box"><strong>PC Picker Analytics</strong></div><br>
+
+    <div class="summary-boxes">
+
+        <div class="box"><strong>Total Users:</strong> {{ total_users }}</div>
+        <div class="box"><strong>Total User Builds Created:</strong> {{ total_builds }}</div>
+        <div class="box"><strong>Total Build's Sold:</strong> {{ total_build_purchases }}</div>
+        <div class="box"><strong>Total Build's Revenue:</strong> ₹{{ total_build_revenue |intcomma  }}</div>
+        <div class="box"><strong>Total Type of Part's Sold:</strong> {{ total_part_sales }}</div>
+        <div class="box"><strong>Total Part's Sold:</strong> {{ total_purchases |intcomma }}</div>
+        <div class="box"><strong>Total Part's Sale Revenue:</strong> ₹{{ total_part_sale_revenue |intcomma  }}</div>
+        <div class="box"><strong>Total Revenue:</strong> ₹{{ total_revenue |intcomma }}</div>
+    </div>
+
+    <div class="report-buttons"><Center>
+        <button onclick="showReport('users')">User's Report</button>
+        <button onclick="showReport('builds')">User Build Report</button>
+        <button onclick="showReport('purchases')">Build Purchase Report</button>
+        <button onclick="showReport('part_sales')">Part's sales Report</button></Center>
+    </div>
+
+    <div class="filters">
+        <form method="GET" id="filterForm">
+            <input type="hidden" name="report" id="report-type" value="{{ report_type }}">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" value="{{ start_date }}">
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" id="end_date" value="{{ end_date }}">
+            <button type="submit">Apply Filter</button>
+            <button type="button" onclick="clearFilters()">Remove Filter</button>
+            <button type="submit" name="download" value="1">Download Report</button>
+        </form>
+    </div>
+
+    <div class="report-section" id="users">
+        <h2>User's Report</h2>
+        <table>
+            <tr><th>Username</th><th> Address </th></tr>
+            {% for user in users_data %}
+                <tr><td>{{ user.user.username }}</td><td>{{ user.address }}  </td></tr>
+            {% empty %}
+                <tr><td>No users found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="report-section" id="builds">
+        <h2>User Build Report</h2>
+        <table>
+            <tr><th>User</th><th>Build Name</th></tr>
+            {% for build in builds_data %}
+                <tr><td>{{ build.user.username }}</td><td>{{ build.name }}</td></tr>
+            {% empty %}
+                <tr><td colspan="2">No builds found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="report-section" id="purchases">
+        <h2>Build Purchase Report</h2>
+        <table>
+            <tr><th>ID</th><th>Build Name</th><th>Total Price</th></tr>
+            {% for purchase in purchases_data %}
+                <tr><td>{{ purchase.id }}</td><td>{{ purchase.build_name }}</td><td>₹{{ purchase.total_price |intcomma  }}</td></tr>
+            {% empty %}
+                <tr><td colspan="3">No purchases found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="report-section" id="part_sales">
+        <h2>Part's sales Report</h2>
+        <table>
+            <tr><th>User</th><th>Part Model</th><th>Part Name</th><th>Part Price</th></tr>
+            {% for sale in part_sales_data %}
+                <tr>
+                    <td>{{ sale.user }}</td>
+                    <td>{{ sale.part_model }}</td>
+                    <td>{{ sale.part_name }}</td>
+                    <td>₹{{ sale.part_price |intcomma  }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">No part sales found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let reportType = "{{ report_type }}";
+            if (!reportType) reportType = "users";
+            showReport(reportType);
+        });
+
+        function showReport(reportType) {
+            document.getElementById('report-type').value = reportType;
+            document.querySelectorAll('.report-section').forEach(e => e.style.display = 'none');
+            document.getElementById(reportType).style.display = 'block';
+        }
+        function clearFilters() {
+            let reportType = document.getElementById('report-type').value;
+            window.location.href = window.location.pathname + "?report=" + reportType;
+        }
+    </script>
+</body>
+</html>

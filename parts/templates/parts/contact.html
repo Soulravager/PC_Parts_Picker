@@ -1,0 +1,530 @@
+<!-- Price box minimal--><!DOCTYPE html>
+<html class="wide wow-animation" lang="en">
+  <head>
+    {% load static %}
+    <title>Contacts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .ie-panel {
+            display: none;
+            background: #212121;
+            padding: 10px 0;
+            box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
+            clear: both;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        html.ie-10 .ie-panel,
+        html.lt-ie-10 .ie-panel {
+            display: block;
+        }
+        
+
+  /* Style the button for the chatbot */
+        .chatbot-button {
+            position: fixed;
+            bottom: 10px;
+            right: 100px;
+            background-color: #0354e9; /* Accent color */
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Chatbox container styling */
+        .chat-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 10px;
+        }
+
+        /* Header of the chatbox */
+        .chat-container header {
+            background-color: #0354e9; /* Accent color */
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* Styling for the chat history */
+        .chat-history {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 10px;
+            flex-grow: 1;
+        }
+
+        /* Chat messages */
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            font-weight: bold;
+            color: #0354e9;
+        }
+
+        .bot-message {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* Chat input styling */
+        .chat-container input {
+            width: calc(100% - 100px); /* Adjust input width */
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #ccc;
+            font-size: 14px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Send button */
+        .chat-container button {
+            width: 80px;
+            padding: 10px;
+            background-color: #0354e9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+    
+  </head>
+    <div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <div class="preloader">
+      <div class="preloader-body">
+        <div class="cssload-container">
+          <div class="cssload-speeding-wheel"></div>
+        </div>
+        <p>Loading...</p>
+      </div>
+    </div><!--a class="section section-banner d-none d-xl-block" href="https://www.templatemonster.com/intense-multipurpose-html-template.html" target="_blank" style="background-image: url(images/background-02-1920x60.jpg); background-image: -webkit-image-set( url(images/background-02-1920x60.jpg) 1x, url(images/background-02-3840x120.jpg) 2x )"><img src="images/foreground-02-1600x60.png" srcset="images/foreground-02-1600x60.png 1x, images/foreground-02-3200x120.png 2x" alt="" width="1600" height="310"></a-->
+    <div class="page">
+<!-- Page Header-->
+<header class="section page-header">
+  <!-- RD Navbar-->
+  <div class="rd-navbar-wrap">
+    <nav class="rd-navbar rd-navbar-wide" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+      <div class="rd-navbar-main-outer">
+        <div class="rd-navbar-main">
+          <!-- RD Navbar Panel-->
+          <div class="rd-navbar-panel">
+            <!-- RD Navbar Toggle-->
+            <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+            <!-- RD Navbar Brand-->
+            <div class="rd-navbar-brand">
+              <a class="brand" href="{% url 'index' %}">
+                <img class="brand-logo-dark" src="{% static 'images/logo-default-261x72.png' %}" alt="" width="261" height="72" srcset="{% static 'images/logo-default-261x72.png' %} 2x"/>
+                <img class="brand-logo-light" src="{% static 'images/logo-inverse-133x45.png' %}" alt="" width="133" height="45" srcset="{% static 'images/logo-inverse-266x90.png' %} 2x"/>
+              </a>
+            </div>
+          </div>
+
+          <div class="rd-navbar-nav-wrap">
+            <!-- RD Navbar Nav-->
+            <ul class="rd-navbar-nav">
+              <li class="rd-nav-item active"><a class="rd-nav-link" href="{% url 'index' %}">Home</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'pcbuild' %}">Builder</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href='/parts/'>PC Parts</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'build_help' %}">Build Help</a></li>
+              <!--li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'contacts' %}">Contacts</a></li-->
+
+              {% if user.is_authenticated %}
+    <li class="rd-nav-item" style="position: relative;">
+        <div class="user-info-box" style="display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="toggleDropdown()">
+            {% if request.user.profile.profile_picture %}
+                <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+            {% endif %}
+            <span style="margin-top: 15px;">{{ user.username }}</span>
+        </div>
+        <div id="user-dropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; padding: 10px; width: 150px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <a href="{% url 'profile' %}" class="dropdown-item">Manage Profile</a>
+
+            {% if user.is_staff %}
+                <a href="{% url 'staff_dashboard' %}" class="dropdown-item" style="color: #28a745; font-weight: bold;">Staff Panel</a>
+            {% endif %}
+
+            <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; padding: 0; color: #007bff;">Logout</button>
+            </form>
+        </div>
+    </li>
+{% else %}
+    <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'login' %}">Login</a></li>
+    <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'signup' %}">Sign up</a></li>
+{% endif %}
+
+<script>
+function toggleDropdown() {
+    var dropdown = document.getElementById("user-dropdown");
+    dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", function(event) {
+    var dropdown = document.getElementById("user-dropdown");
+    var userInfoBox = document.querySelector(".user-info-box");
+
+    if (!userInfoBox.contains(event.target) && dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    }
+});
+</script>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("user-dropdown");
+    if (dropdown.style.display === "none" || dropdown.style.display === "") {
+      dropdown.style.display = "block";
+    } else {
+      dropdown.style.display = "none";
+    }
+  }
+   // Toggle chatbot visibility
+   document.getElementById('chatbot-button').onclick = function() {
+    var popup = document.getElementById('chatbot-popup');
+    popup.style.display = (popup.style.display === 'none' || popup.style.display === '') ? 'block' : 'none';
+  };
+
+  // Handle user input in chatbot
+  document.getElementById('chatbot-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      var input = document.getElementById('chatbot-input').value;
+      if (input.trim() !== '') {
+        // Add user message to chat window
+        var userMessage = document.createElement('div');
+        userMessage.textContent = "You: " + input;
+        document.getElementById('chatbot-body').appendChild(userMessage);
+        
+        // Clear input field
+        document.getElementById('chatbot-input').value = '';
+
+        // Simulate chatbot response
+        var botMessage = document.createElement('div');
+        botMessage.textContent = "Bot: " + "I'm here to help!";
+        document.getElementById('chatbot-body').appendChild(botMessage);
+
+        // Scroll to the bottom
+        var chatbotBody = document.getElementById('chatbot-body');
+        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+      }
+    }
+  });
+</script>
+<!--
+<link rel="stylesheet" href="{% static 'css/dark.css' %}">
+
+<script src="{% static 'js/darkmode-toggle.js' %}"></script>
+
+<button id="toggle-btn">Toggle Dark Mode</button>
+
+<script src="{% static 'js/darkmode-toggle.js' %}"></script>
+<-->>
+  <section class="breadcrumbs-custom bg-image context-dark" style="background-image: url('{% static 'images/aboutbg1.jpg' %}')">
+        <div class="container">
+          <h2 class="breadcrumbs-custom-title">Contacts</h2>
+          <div class="breadcrumbs-custom-subtitle">Contact ME @Alwin </div>
+        </div>
+      </section>
+      <!-- CHAT BOT-->
+      
+      
+    </section>
+      <!-- Blurb minimal-->
+      <section class="section section-md bg-default">
+        <div class="container">
+          <div class="row row-40">
+            <div class="col-sm-6 col-md-4">
+              <div class="box-lined">
+                <div class="box-lined-body">
+                  <h6 class="box-lined-title">Email & telephone</h6>
+                  <ul class="box-lined-list">
+                    <li><a class="big link-default" href="mailto:#">iamalwinkj@gmail.com</a></li>
+                    <li><a class="big link-default" href="tel:#">+91 97443 68230</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <div class="box-lined">
+                <div class="box-lined-body">
+                  <h6 class="box-lined-title">HQ</h6>
+                  <ul class="box-lined-list">
+                    <li class="big">Thrissur  Kerala  India 680 501</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+              <div class="box-lined">
+                <div class="box-lined-body">
+                  <h6 class="box-lined-title">Socials</h6>
+                  <ul class="list-inline list-inline-sm">
+                    <li><a class="icon icon-sm icon-bordered link-default mdi mdi-facebook" href="#"></a></li>
+                    <li><a class="icon icon-sm icon-bordered link-default mdi mdi-instagram" href="#"></a></li>
+                    <li><a class="icon icon-sm icon-bordered link-default mdi mdi-behance" href="#"></a></li>
+                    <li><a class="icon icon-sm icon-bordered link-default mdi mdi-twitter" href="#"></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+            <!-- Chatbot Button ------------------------------------>
+<!-- Chatbot button -->
+<button class="chatbot-button" onclick="toggleChatbox()">Chatbot </button>
+
+<!-- Chatbox container -->
+<div class="chat-container" id="chat-container" style="display: none;">
+    <header>
+        <p>PC Builder AI Assistant</p>
+    </header>
+    <div class="chat-history" id="chat-history">
+        <!-- Chat history will appear here -->
+    </div>
+    <form id="chat-form">
+        <input type="text" id="user-input" name="user_input" placeholder="Type your message here" />
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+  
+    // Toggle the chatbox visibility when the chatbot button is clicked
+    const username = "{{ user.username }}";
+    function toggleChatbox() {
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.style.display = (chatContainer.style.display === 'none' || chatContainer.style.display === '') ? 'block' : 'none';
+    }
+
+    // Handle form submission and send data to the server
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+        fetch("{% url 'chatbot' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'user_input': userInput
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const chatHistory = document.getElementById('chat-history');
+            chatHistory.innerHTML += `
+                <div class="message user-message">
+                     <p><span style="color: red;">${username}</span>: ${data.user_input}</p>
+                </div>
+                <div class="message bot-message">
+                    <p><strong>PC Picker:</strong></p>
+                    <p>${data.ai_response}</p>
+                </div>
+            `;
+            document.getElementById('user-input').value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to the latest message
+        });
+    });
+</script>
+      
+      <!-- Get in touch with us-->
+      <section class="section section-md bg-default">
+        <div class="container">
+          <h4>Get in touch with us</h4>
+          <p class="big">Keep in touch</p>
+          <!-- RD Mailform-->
+          <form id="contact-form" class="rd-form rd-mailform form-boxed" method="post">
+            {% csrf_token %}
+            <div class="row row-50">
+              <div class="col-lg-4">
+                <div class="form-wrap form-wrap-icon">
+                  <div class="form-icon mdi mdi-account-outline"></div>
+                  <input class="form-input" id="contact-name" type="text" name="name" required>
+                  <label class="form-label" for="contact-name">Name</label>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-wrap form-wrap-icon">
+                  <div class="form-icon mdi mdi-email-outline"></div>
+                  <input class="form-input" id="contact-email" type="email" name="email" required>
+                  <label class="form-label" for="contact-email">E-mail</label>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-wrap form-wrap-icon">
+                  <div class="form-icon mdi mdi-phone"></div>
+                  <input class="form-input" id="contact-phone" type="text" name="phone">
+                  <label class="form-label" for="contact-phone">Phone</label>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-wrap form-wrap-icon">
+                  <div class="form-icon mdi mdi-message-outline"></div>
+                  <label class="form-label" for="contact-message">Message</label>
+                  <textarea class="form-input" id="contact-message" name="message" required></textarea>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="button button-default" type="submit">Send</button>
+              </div>
+            </div>
+          </form>
+
+          <script>
+            document.getElementById("contact-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                let formData = new FormData(this);
+                fetch("{% url 'contact_form_submission' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error("Error:", error));
+            });
+            </script>
+        </div>
+      </section>
+      <!-- Page Footer--><!--a class="section section-banner" href="https://www.templatemonster.com/intense-multipurpose-html-template.html" target="_blank" style="background-image: url(images/background-01-1920x310.jpg); background-image: -webkit-image-set( url(images/background-01-1920x310.jpg) 1x, url(images/background-01-3840x620.jpg) 2x )"><img src="images/foreground-01-1600x310.png" srcset="images/foreground-01-1600x310.png 1x, images/foreground-01-3200x620.png 2x" alt="" width="1600" height="310"></a-->
+      <div class="pre-footer-classic bg-gray-700 context-dark">
+        <div class="container">
+          <div class="row row-30 justify-content-lg-between">
+            <div class="col-sm-6 col-lg-3 col-xl-3">
+              <h5>Location</h5>
+              <ul class="list list-sm">
+                <li>
+                  <p>Thrissur</p>
+                </li>
+                <li>
+                  <p>Kerala</p>
+                </li>
+                <li>
+                  <p>680 501</p>
+                </li>
+                <li>
+                  <p>India</p>
+                </li>
+              </ul>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+              <h5>Contacts</h5>
+              <dl class="list-terms-custom">
+                <dt>Ph.</dt>
+                <dd><a class="link-default" href="tel:#">+91 9744368230 </a></dd>
+              </dl>
+              <dl class="list-terms-custom">
+                <dt>Mail.</dt>
+                <dd><a class="link-default" href="mailto:#">iamalwinkj@gmail.com</a></dd>
+              </dl>
+              <ul class="list-inline list-inline-sm">
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-facebook" href="https://www.facebook.com/SoulRavanger/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-instagram" href="https://www.instagram.com/soul_ravager/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-behance" href="https://x.com/Soul_Ravager"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-twitter" href="https://x.com/Soul_Ravager"></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-4">
+              <h5>Newsletter</h5>
+              <form class="rd-form rd-mailform" id="newsletter-form">
+                <div class="form-wrap form-wrap-icon">
+                    <div class="form-icon mdi mdi-email-outline"></div>
+                    <input class="form-input" id="footer-email" type="email" name="email" required>
+                    <label class="form-label" for="footer-email">E-mail</label>
+                </div>
+                <div class="button-wrap">
+                    <button class="button button-default button-invariable" type="submit">Subscribe</button>
+                </div>
+            </form>
+            <script>
+            document.getElementById("newsletter-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                let formData = new FormData(this);
+            
+                fetch("/newsletter-subscribe/", {  // Make sure this URL matches your Django URLs
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error("Error:", error));
+            });
+            </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="section footer-classic context-dark text-center">
+        <div class="container">
+          <div class="row row-15 justify-content-lg-between">
+            <div class="col-lg-6 col-xl-6 text-lg-left">
+              <p class="rights"><span>&copy;&nbsp;</span><span class="copyright-year"></span>. All Rights Reserved. Design by <a href="https://www.facebook.com/SoulRavanger/">Alwin</a></p>
+            </div>
+            <div class="col-lg-6 col-xl-6">
+              <ul class="list-inline list-inline-lg text-uppercase">
+                <li><a href="http://alvispcpicker.local/about_us/">About us</a></li>
+                <li><a href="http://alvispcpicker.local/about_us/">Our Team</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <div class="snackbars" id="form-output-global"></div>
+    <script src="{% static 'js/core.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script> 
+  </body>
+</html>

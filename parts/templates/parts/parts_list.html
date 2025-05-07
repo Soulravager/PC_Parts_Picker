@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Parts</title>
+    {% load static %}{% load humanize %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/parts_list.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0Hhonpy0GnoPzPwAQBZa2IIyQl9GyJmyVGK3kT3xnJm9ttgqYdV7gaAUrqexhcXc4OT58jLSRqzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .star-rating {
+            display: inline-block;
+            direction: rtl;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            display: inline-block;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #ddd;
+        }
+
+        .star-rating label:before {
+            content: "★";
+        }
+
+        .star-rating input[type="radio"]:checked ~ label {
+            color: #ffc107;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #ffed85;
+        }
+
+        .sidebar {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            position: fixed;
+            top: 140px;
+            left: 0;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            margin-right: 30px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 1.8em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 25px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            transition: color 0.3s ease, padding-left 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            color: #007bff;
+            padding-left: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .sidebar img {
+            width: 35px;
+            height: 35px;
+            margin-right: 15px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            margin-left: 310px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 140px);
+        }
+
+        .part-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            flex: 1;
+        }
+
+        .part-box {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .part-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .part-box img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .part-box h3 {
+            margin: 15px 0 10px;
+            color: #2c3e50;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .part-box p {
+            margin: 8px 0;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .part-box .price {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-top: 12px;
+        }
+
+        .part-details {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-cart, .btn-favorite, .btn-details {
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn-cart:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-favorite {
+            background-color: #e74c3c;
+        }
+
+        .btn-favorite:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        .heart-icon.favorited {
+            color: #630000; /* Red color for favorited */
+        }
+        .heart-icon {
+            color: #ddd; /* Default color: light gray (white-ish) */
+        }
+        .btn-details {
+            background-color: #2ecc71;
+        }
+
+        .btn-details:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        #cartCountBadge {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            padding: 8px;
+            font-size: 0.9em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .cart-info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            position: fixed; /* Fix the cart info to the top */
+            top: 100px; /* Adjust top as needed to avoid overlap with header */
+            right: 30px; /* Position from the right */
+            z-index: 1000; /* Ensure it's above other elements */
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .action-buttons form, .action-buttons button {
+            margin: 0 5px;
+        }
+
+        #review-form button {
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="preloader">
+        <div class="preloader-body">
+          <div class="cssload-container">
+            <div class="cssload-speeding-wheel"></div>
+          </div>
+          <p>Loading...</p>
+        </div>
+      </div><!--a class="section section-banner d-none d-xl-block" href="https://www.templatemonster.com/intense-multipurpose-html-template.html" target="_blank" style="background-image: url(images/background-02-1920x60.jpg); background-image: -webkit-image-set( url(images/background-02-1920x60.jpg) 1x, url(images/background-02-3840x120.jpg) 2x )"><img src="images/foreground-02-1600x60.png" srcset="images/foreground-02-1600x60.png 1x, images/foreground-02-3200x120.png 2x" alt="" width="1600" height="310"></a-->
+      <div class="page">
+<header class="section page-header">
+    <div class="rd-navbar-wrap">
+        <nav class="rd-navbar rd-navbar-wide" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+            <div class="rd-navbar-main-outer">
+                <div class="rd-navbar-main">
+                    <div class="rd-navbar-panel">
+                        <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+                        <div class="rd-navbar-brand">
+                            <a class="brand" href="{% url 'index' %}">
+                                <img class="brand-logo-dark" src="{% static 'images/logo-default-261x72.png' %}" alt="" width="261" height="72" srcset="{% static 'images/logo-default-261x72.png' %} 2x"/>
+                                <img class="brand-logo-light" src="{% static 'images/logo-inverse-133x45.png' %}" alt="" width="133" height="45" srcset="{% static 'images/logo-inverse-266x90.png' %} 2x"/>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="rd-navbar-nav-wrap">
+                        <ul class="rd-navbar-nav">
+                            <li class="rd-nav-item active"><a class="rd-nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'pcbuild' %}">Builder</a></li>
+                            <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'build_help' %}">Build Help</a></li>
+                            <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'contacts' %}">Contacts</a></li>
+
+                            {% if user.is_authenticated %}
+                            <li class="rd-nav-item" style="position: relative;">
+                                <div class="user-info-box" style="display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="toggleDropdown()">
+                                    {% if request.user.profile.profile_picture %}
+                                        <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                                    {% else %}
+                                        <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                                    {% endif %}
+                                    <span style="margin-top: 15px;">{{ user.username }}</span>
+                                </div>
+                                <div id="user-dropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; padding: 10px; width: 150px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                    <a href="{% url 'profile' %}" class="dropdown-item">Manage Profile</a>
+                        
+                                    {% if user.is_staff %}
+                                        <a href="{% url 'staff_dashboard' %}" class="dropdown-item" style="color: #28a745; font-weight: bold;">Staff Panel</a>
+                                    {% endif %}
+                        
+                                    <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: none; border: none; padding: 0; color: #007bff;">Logout</button>
+                                    </form>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'signup' %}">Sign up</a></li>
+                        {% endif %}
+                        
+                        <script>
+                        function toggleDropdown() {
+                            var dropdown = document.getElementById("user-dropdown");
+                            dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+                        }
+                        
+                        // Close dropdown when clicking outside
+                        document.addEventListener("click", function(event) {
+                            var dropdown = document.getElementById("user-dropdown");
+                            var userInfoBox = document.querySelector(".user-info-box");
+                        
+                            if (!userInfoBox.contains(event.target) && dropdown.style.display === "block") {
+                                dropdown.style.display = "none";
+                            }
+                        });
+                        </script>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+<script>
+    function toggleDropdown() {
+        var dropdown = document.getElementById("user-dropdown");
+        if (dropdown.style.display === "none" || dropdown.style.display === "") {
+            dropdown.style.display = "block";
+        } else {
+            dropdown.style.display = "none";
+        }
+    }
+</script>
+<div style="display: flex;">
+    <div class="sidebar">
+        <h2>Categories</h2>
+        <ul>
+            <li>
+                <a href="?category=cpu">
+                    <img src="{% static 'build_ico/1.png' %}" alt="CPU Logo">
+                    CPU
+                </a>
+            </li>
+            <li>
+                <a href="?category=gpu">
+                    <img src="{% static 'build_ico/3.png' %}" alt="GPU Logo">
+                    GPU
+                </a>
+            </li>
+            <li>
+                <a href="?category=motherboard">
+                    <img src="{% static 'build_ico/2.png' %}" alt="Motherboard Logo">
+                    Motherboards
+                </a>
+            </li>
+            <li>
+                <a href="?category=ram">
+                    <img src="{% static 'build_ico/4.png' %}" alt="RAM Logo">
+                    RAM
+                </a>
+            </li>
+            <li>
+                <a href="?category=ssd">
+                    <img src="{% static 'build_ico/5.png' %}" alt="SSD Logo">
+                    STORAGE
+                </a>
+            </li>
+            <li>
+                <a href="?category=psu">
+                    <img src="{% static 'build_ico/6.png' %}" alt="PSU Logo">
+                    PSU
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="cart-info">
+            <a href="/purchase_parts/" class="btn btn-warning position-relative">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Cart
+                <span id="cartCountBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ cart_items.count }}
+                </span>
+            </a>
+        </div>
+        <h1>Browse {{ category|title }} Parts</h1>
+        <div class="part-container" id="part-container">
+            {% for part in parts %}
+                <div class="part-box">
+                    <img src="{{ part.image.url }}" alt="{{ part.name }}">
+                    <h3>{{ part.name }}</h3>
+                    <p>Brand: {{ part.brand }}</p>
+                    <p class="price">₹{{ part.price|intcomma }}</p>
+                    <p>User Rating: <span class="rating" data-rating="{{ part.avg_rating }}"></span></p>
+                    <div class="action-buttons">
+                      <form method="POST" action="{% url 'toggle_favorite' part.model %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-favorite">
+                            <i class="heart-icon {% if user.is_authenticated and part.model in favorite_items %}favorited{% endif %} far fa-heart"></i>
+                        </button>
+                    </form>
+                        <form method="POST" action="{% url 'toggle_cart' part.model %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-cart" style="background-color: {% if user.is_authenticated and part.model in cart_items %} #000; {% else %} #3498db; {% endif %}">
+                                {% if user.is_authenticated and part.model in cart_items %}
+                                    <i class="fas fa-shopping-cart"></i>
+                                {% else %}
+                                    <i class="fas fa-cart-plus"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+                        <button onclick="showPartDetails({{ part.id }}, '{{ category }}')" class="btn btn-details">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="part-details" class="part-details">
+            <button onclick="showAllParts()" class="btn btn-secondary" style="margin-bottom: 20px;">Back to Overview</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let element = document.getElementById("part-description");
+        if (element) {
+            let formattedText = element.innerText.replace(/\/\//g, "<br>");
+            element.innerHTML = formattedText;
+        }
+
+        setupRatingForm();
+        setupReviewForm();
+
+        let ratingElements = document.querySelectorAll(".rating");
+        ratingElements.forEach(function (element) {
+            let rating = parseInt(element.getAttribute("data-rating"), 10) || 0;
+            let stars = '⭐'.repeat(rating);
+            element.textContent = stars;
+        });
+    });
+
+    function showAllParts() {
+        const detailsDiv = document.getElementById("part-details");
+        const partContainer = document.getElementById("part-container");
+        detailsDiv.style.display = 'none';
+        partContainer.style.display = 'grid';
+    }
+
+    function setupRatingForm() {
+        const form = document.getElementById("rating-form");
+        if (!form) return;
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(form);
+            let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch("{% url 'submit_rating' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("selected-part-rating").textContent = data.avg_rating;
+                    alert("Rating submitted successfully!");
+                } else {
+                    alert("Error submitting rating: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    }
+
+
+    function setupReviewForm() {
+    const reviewForm = document.getElementById("review-form");
+    if (!reviewForm) return;
+
+    reviewForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let formData = new FormData(reviewForm);
+        let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        fetch("/submit-review/", {  // Ensure this URL is correct
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"  // Important for Django to recognize AJAX
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let newReview = document.createElement("div");
+                newReview.classList.add("review-item");
+                newReview.innerHTML = `
+                    <strong>${data.user}</strong> - <small>${data.date}</small>
+                    <p>${data.content}</p>
+                `;
+                document.getElementById("reviews-list").prepend(newReview);
+                reviewForm.reset();
+
+                 // Clear the form fields
+                document.getElementById("review_text").value = '';
+
+            } else {
+               
+            }
+        })
+        .catch(error => {
+            console.error("Error submitting review:", error);
+            alert("Review submitted Successfully "); // Provide user feedback
+        });
+    });
+}
+
+
+    function showPartDetails(partId, category) {
+        fetch(`/part-details/${category}/${partId}/`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("part-details").innerHTML = html;
+                document.getElementById("part-details").style.display = "block";
+                document.getElementById("part-container").style.display = "none";
+
+                setTimeout(() => {
+                    setupRatingForm();
+                    setupReviewForm();
+                }, 100);
+            })
+            .catch(error => console.error("Error loading part details:", error));
+    }
+</script>
+<script src="{% static 'js/core.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

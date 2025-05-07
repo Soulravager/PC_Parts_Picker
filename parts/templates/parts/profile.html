@@ -1,0 +1,384 @@
+<head>
+    {% load static %}
+    {% load humanize %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+</head>
+
+<body>
+<div class="profile-container">
+    <!-- Top Frame for Profile Info (User Picture and Info) -->
+    <div class="top-frame">
+        <div class="user-info">
+            <h2>{{ request.user.username }}'s Profile</h2>
+ 
+            <div class="profile-picture">
+                {% if request.user.profile.profile_picture %}
+                    <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-img"/> 
+                {% else %}
+                    <p> <img src="{% static 'images/staff.png' %}">.</p>
+                {% endif %}
+                {% if request.user.is_staff %}<br>
+                <img src="{% static 'images/staff.png' %}" alt="Staff Badge" class="staff-tag">
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <!-- Left Sidebar for Profile Menu -->
+        <div class="sidebar">
+            <h4>Profile Menu</h4>
+            <ul>
+                <li><a href="#" onclick="showSection('your-builds')">Your Builds</a></li>                   
+                <li><a href="#" onclick="showSection('favorites')">Favorites</a></li>
+                <li><a href="#" onclick="showSection('cart')">Your Cart</a></li>                  
+                <li><a href="#" onclick="showSection('purchase-history')">Purchase History</a></li>
+                <li><a href="#" onclick="showSection('profile-manager')">Profile Manager</a></li> 
+            </ul>
+        </div>
+
+        <div class="content">
+            <!-- Profile Manager Section -->
+            <div id="profile-manager" class="section">
+                <br>
+                <h5>Profile Manager</h5>
+                <form method="post" enctype="multipart/form-data" class="profile-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_profile_picture">Profile Picture:</label>
+                        {{ form.profile_picture }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_address" class="font-weight-bold d-block">Update Address:</label>
+                        {{ form.address }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+                <style>
+                    textarea#id_address {
+                        height: 100px !important; /* Adjust height as needed */
+                        resize: none; /* Prevent resizing */
+                    }
+                </style>
+            </div>
+
+            <!-- Your Builds Section -->
+            <div id="your-builds" class="section"><br>
+                <h5>Your Builds</h5>
+                {% if builds_with_total %}
+                    <ul class="build-list">
+                        {% for item in builds_with_total %}
+                            <li class="build-item">
+                                <strong>{{ item.build.name }}</strong><br>
+                                <div class="build-details">
+                                    <!-- Build Details -->
+                                    <p><strong>CPU:</strong> {{ item.build.cpu.name }}<a href="/parts/{{item.build.cpu.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p>
+                                    <p><strong>Motherboard:</strong> {{ item.build.motherboard.name }}<a href="/parts/{{item.build.motherboard.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p>
+                                    <p><strong>GPU:</strong> {{ item.build.gpu.name }}<a href="/parts/{{item.build.gpu.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p>
+                                    <p><strong>RAM:</strong> {{ item.build.ram.brand }} {{ item.build.ram.model }} ({{ item.build.ram.capacity }}GB)<a href="/parts/{{item.build.ram.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p>
+                                    <p><strong>SSD:</strong> {{ item.build.ssd.name }}<a href="/parts/{{item.build.ssd.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p> 
+                                    <p><strong>PSU:</strong> {{ item.build.psu.name }}<a href="/parts/{{item.build.psu.model}}" target="_blank" style="color: #007bff; text-decoration: none;">[About]</a></p> 
+                                    <p><strong>Price:</strong> ₹{{ item.total_price |intcomma }}</p>
+                                    <small>Created on: {{ item.build.created_at }}</small><br><br>
+            
+                                    <!-- Remove Button -->
+                                    <form action="{% url 'delete_build' item.build.id %}" method="post" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="remove-button" style="background-color: #e74c3c; color: white; padding: 6px 12px; border: none; border-radius: 5px;">Remove</button>
+                                    </form>
+            
+                                    <!-- Share/Unshare Button -->
+                                    <form action="{% url 'toggle_share_build' item.build.id %}" method="post" style="display:inline; margin-left: 10px;">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background-color: {% if item.build.shareable %}#f39c12{% else %}#2ecc71{% endif %}; color: white; padding: 6px 12px; border: none; border-radius: 5px;">
+                                            {% if item.build.shareable %}Unshare{% else %}Share{% endif %}
+                                        </button>
+                                    </form>
+            
+                                    <!-- View & Copy Link Buttons (Only when shareable) -->
+                                    {% if item.build.shareable %}
+                                        <a href="{% url 'shared_build_detail' item.build.id %}" target="_blank" style="margin-left: 10px; text-decoration: none;">
+                                            <button style="background-color: #3498db; color: white; padding: 6px 12px; border: none; border-radius: 5px;">View Shared Build</button>
+                                        </a>
+            
+                                        <button onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'shared_build_detail' item.build.id %}')" 
+                                        style="background-color: #9b59b6; color: white; padding: 6px 12px; border: none; border-radius: 5px; margin-left: 10px;">
+                                        Copy Link
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No builds created yet.</p>
+                {% endif %}
+            </div>
+
+<!-- Purchase History  -->
+            <div id="purchase-history" class="section">
+                <br>
+                <h5>Purchase History</h5>
+            
+                <!-- Toggle Button -->
+                <button id="toggleHistoryBtn" class="btn btn-primary mb-3" onclick="toggleHistory()">
+                    🔧 Show Parts History
+                </button>
+            
+                <!-- Build Purchase History -->
+                <div id="buildHistory">
+                    {% if purchases %}
+                        <ul>
+                            {% for purchase in purchases %}
+                                <li class="build-item">
+                                    <strong>Build Name: {{ purchase.build_name }}</strong><br>
+                                    <strong>Transaction ID:</strong> {{ purchase.purchase_date|date:"dTYyHi" }}<br>
+                                    CPU: {{ purchase.cpu.name }}<br>
+                                    Motherboard: {{ purchase.motherboard.name }}<br>
+                                    GPU: {{ purchase.gpu.name }}<br>
+                                    RAM: {{ purchase.ram.name }}<br>
+                                    SSD: {{ purchase.ssd.name }}<br>
+                                    PSU: {{ purchase.psu.name }}<br>
+                                    Total Price: ₹{{ purchase.total_price |intcomma}}<br>
+                                    Date: {{ purchase.purchase_date|date:"F j, Y, g:i a" }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                    <p style="color: red;">No purchase history available.</p>
+                    {% endif %}
+                </div>
+            
+                <!-- Individual Parts Purchase History (Hidden by Default) -->
+                <div id="partsHistory" style="display: none;">
+                    {% if part_purchases %}
+                        <ul>
+                            {% for part in part_purchases %}
+                                <li class="build-item">
+                                    <strong>Part Name:</strong> {{ part.part_name }}<br>
+                                    <strong>Model:</strong> {{ part.part_model }}<br>
+                                    <strong>Transaction ID:</strong> {{ part.purchased_at|date:"dTYyHi" }}<br>
+                                    <strong>Purchased On:</strong> {{ part.purchased_at|date:"F j, Y, g:i a" }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: red;">⚠️ No individual part purchase history available.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <script>
+            function toggleHistory() {
+                let buildHistory = document.getElementById("buildHistory");
+                let partsHistory = document.getElementById("partsHistory");
+                let toggleBtn = document.getElementById("toggleHistoryBtn");
+            
+                if (buildHistory.style.display === "none") {
+                    buildHistory.style.display = "block";
+                    partsHistory.style.display = "none";
+                    toggleBtn.innerHTML = "🔧 Show Parts History";
+                } else {
+                    buildHistory.style.display = "none";
+                    partsHistory.style.display = "block";
+                    toggleBtn.innerHTML = "🛠 Show Build History";
+                }
+            }
+            </script>
+            
+
+            <!-- Favorites (Placeholder) -->
+            <div id="favorites" class="section"><br>
+                <h5>Favorites</h5>
+                <p>  Favorites --items.</p>
+                {% if favorite_items %}
+                    <ul>
+                        {% for favorite in favorite_items %}
+                        <li>
+                            {{ favorite.part_name }} <a href="/parts/{{favorite.part_model}}" target="_blank" style="color: #007bff; text-decoration: none;">[Go TO]</a>
+                            <form method="POST" action="{% url 'favorite_profile' favorite.part_model %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" style="background-color: rgb(247, 247, 247); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    ❌
+                                </button>
+                            </form>
+                            
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No favorite items found.</p>
+                {% endif %}                
+            </div>
+                        <!-- Cart (Placeholder) -->
+                        <div id="cart" class="section"><br>
+                            <h5>Cart items</h5> 
+                            <p>  cart --items.</p>
+                            {% if cart_items %}
+                                <ul>
+                                    {% for cart in cart_items %}
+                                    <li>
+                                        {{ cart.part_name }} <a href="/parts/{{cart.part_model}}" target="_blank" style="color: #007bff; text-decoration: none;">[Go TO]</a>
+                                        <form method="POST" action="{% url 'cart_profile' cart.part_model %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" style="background-color: #ffffff; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🛒❌🗑️</button>
+                                        </form>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>No cart items found.</p>
+                            {% endif %}
+                        </div>
+        </div>
+    </div>
+
+    <!-- Go Home Button -->
+<!-- Go Home Button -->
+<div class="col-sm-10 text-sm-center">
+    <a class="button button-default" href="{% url 'index' %}">
+        Home Page
+    </a>
+</div>
+
+
+<!-- External CSS for Modern Look -->
+<style>
+    .staff-tag {
+    width: 80px;
+    height: 40px;
+    
+    vertical-align: middle;
+    }
+    /* Layout */
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Top Frame */
+    .top-frame {
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        border-bottom: 2px solid #ddd;
+    }
+
+    /* Content Container */
+    .content-container {
+        display: flex;
+        width: 100%;
+    }
+
+    /* Left Sidebar (Menu) */
+    .sidebar {
+        width: 25%;
+        padding-right: 20px;
+        border-right: 2px solid #ddd;
+    }
+
+    /* Profile Info */
+    .user-info h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+
+    /* Content */
+    .content {
+        width: 75%;
+        padding-left: 20px;
+    }
+
+    .build-item {
+        padding: 10px;
+        background: #f9f9f9;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .build-item strong {
+        color: #333;
+    }
+
+    button {
+        padding: 12px 24px;
+        background-color: #333;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #555;
+    }
+
+    /* Sections */
+    .section {
+        display: none;
+    }
+
+    .section.active {
+        display: block;
+    }
+
+    /* Buttons and Links Styling */
+    .button {
+        padding: 12px 24px;
+        background-color: #333;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .button:hover {
+        background-color: #555;
+    }
+</style>
+
+<script>
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+    }
+
+
+    function copyToClipboard(url) {
+        const tempInput = document.createElement("input");
+        document.body.appendChild(tempInput);
+        tempInput.value = url;
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("Link copied to clipboard!");
+    }
+</script>
+</body>

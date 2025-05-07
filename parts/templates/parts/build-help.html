@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="en">
+  <head>
+    {% load static %}
+    <title>BUILD HELP</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,900">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .ie-panel {
+            display: none;
+            background: #212121;
+            padding: 10px 0;
+            box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
+            clear: both;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        html.ie-10 .ie-panel,
+        html.lt-ie-10 .ie-panel {
+            display: block;
+       }       
+           
+    </style>
+</head>
+
+  <body>
+    <div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="{% static 'images/ie8-panel/warning_bar_0000_us.jpg' %}" alt="Warning Bar" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
+    <div class="preloader">
+      <div class="preloader-body">
+        <div class="cssload-container">
+          <div class="cssload-speeding-wheel"></div>
+        </div>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <div class="page">
+<!-- Page Header-->
+<header class="section page-header">
+  <!-- RD Navbar-->
+  <div class="rd-navbar-wrap">
+    <nav class="rd-navbar rd-navbar-wide" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+      <div class="rd-navbar-main-outer">
+        <div class="rd-navbar-main">
+          <!-- RD Navbar Panel-->
+          <div class="rd-navbar-panel">
+            <!-- RD Navbar Toggle-->
+            <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+            <!-- RD Navbar Brand-->
+            <div class="rd-navbar-brand">
+              <a class="brand" href="{% url 'index' %}">
+                <img class="brand-logo-dark" src="{% static 'images/logo-default-261x72.png' %}" alt="" width="261" height="72" srcset="{% static 'images/logo-default-261x72.png' %} 2x"/>
+                <img class="brand-logo-light" src="{% static 'images/logo-inverse-133x45.png' %}" alt="" width="133" height="45" srcset="{% static 'images/logo-inverse-266x90.png' %} 2x"/>
+              </a>
+            </div>
+          </div>
+
+          <div class="rd-navbar-nav-wrap">
+            <!-- RD Navbar Nav-->
+            <ul class="rd-navbar-nav">
+              <li class="rd-nav-item active"><a class="rd-nav-link" href="{% url 'index' %}">Home</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'pcbuild' %}">Builder</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href='/parts/'>PC Parts</a></li>
+              <!--li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'about_us' %}">About</a></li-->
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'contacts' %}">Contacts</a></li>
+
+              {% if user.is_authenticated %}
+              <li class="rd-nav-item" style="position: relative;">
+                  <div class="user-info-box" style="display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="toggleDropdown()">
+                      {% if request.user.profile.profile_picture %}
+                          <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                      {% else %}
+                          <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" style="width:50px;height:50px;border-radius:50%; margin-right: 10px; margin-top: 15px;" />
+                      {% endif %}
+                      <span style="margin-top: 15px;">{{ user.username }}</span>
+                  </div>
+                  <div id="user-dropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; padding: 10px; width: 150px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                      <a href="{% url 'profile' %}" class="dropdown-item">Manage Profile</a>
+          
+                      {% if user.is_staff %}
+                          <a href="{% url 'staff_dashboard' %}" class="dropdown-item" style="color: #28a745; font-weight: bold;">Staff Panel</a>
+                      {% endif %}
+          
+                      <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                          {% csrf_token %}
+                          <button type="submit" style="background: none; border: none; padding: 0; color: #007bff;">Logout</button>
+                      </form>
+                  </div>
+              </li>
+          {% else %}
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'login' %}">Login</a></li>
+              <li class="rd-nav-item"><a class="rd-nav-link" href="{% url 'signup' %}">Sign up</a></li>
+          {% endif %}
+          
+          <script>
+          function toggleDropdown() {
+              var dropdown = document.getElementById("user-dropdown");
+              dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+          }
+          
+          // Close dropdown when clicking outside
+          document.addEventListener("click", function(event) {
+              var dropdown = document.getElementById("user-dropdown");
+              var userInfoBox = document.querySelector(".user-info-box");
+          
+              if (!userInfoBox.contains(event.target) && dropdown.style.display === "block") {
+                  dropdown.style.display = "none";
+              }
+          });
+          </script>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  function toggleDropdown() {
+    var dropdown = document.getElementById("user-dropdown");
+    if (dropdown.style.display === "none" || dropdown.style.display === "") {
+      dropdown.style.display = "block";
+    } else {
+      dropdown.style.display = "none";
+    }
+  }
+</script>
+<!-- HELP BUILD SECTION-->
+ <!-- HELP BUILD SECTION-->
+  <!-- HELP BUILD SECTION-->
+      <section class="breadcrumbs-custom bg-image context-dark" style="background-image: url('{% static 'images/aboutbg.jpg' %}')">
+        <div class="container">
+          <h5 class="breadcrumbs-custom-title">Build Help</h5>
+          <div class="breadcrumbs-custom-subtitle">Welcome to PC Parts Picker Guide! Building a PC involves many factors, but we've made it easier for you. Our one-stop site provides all the resources, guides, and links you need to build your perfect PC.</div>
+        </div>
+      </section>
+      <br><br><br><br>
+<!--ADD CONTENTS HERE-->
+<div class="containers">
+  <h5>Basic Knowledge of PC Components</h5>
+  <p>Understanding PC components is crucial for building a system. Below are the key parts:</p>
+
+  <div class="grid">
+      <!-- CPU -->
+      <div class="part">
+          <h6>Processor(CPU)</h6>
+          <img src="{% static 'build_ico/1.png' %}" alt="CPU" class="part-img"/>
+          <p>The brain of the PC, executing instructions and handling calculations. Intel and AMD are the main brands.</p>
+      </div>
+
+      <!-- GPU -->
+      <div class="part">
+          <h6>Graphics Card(GPU)</h6>
+          <img src="{% static 'build_ico/3.png' %}" alt="GPU" class="part-img"/>
+          <p>Renders images, videos, and 3D graphics. Essential for gaming, rendering, and AI computations.</p>
+      </div>
+
+      <!-- Motherboard -->
+      <div class="part">
+          <h6>Motherboard</h6>
+          <img src="{% static 'build_ico/2.png' %}" alt="Motherboard" class="part-img"/>
+          <p>Connects all components, determines compatibility, and includes expansion slots for upgrades.</p>
+      </div>
+
+      <!-- RAM -->
+      <div class="part">
+          <h6>Memory(RAM)</h6>
+          <img src="{% static 'build_ico/4.png' %}" alt="RAM" class="part-img"/>
+          <p>Stores temporary data for running applications. Higher RAM allows smoother multitasking.</p>
+      </div>
+
+      <!-- SSD -->
+      <div class="part">
+          <h6>Storage (SSD)</h6>
+          <img src="{% static 'build_ico/5.png' %}" alt="SSD" class="part-img"/>
+          <p>Provides fast data access, reducing boot and load times compared to HDDs.</p>
+      </div>
+
+      <!-- PSU -->
+      <div class="part">
+          <h6>PSU (Power Supply)</h6>
+          <img src="{% static 'build_ico/6.png' %}" alt="PSU" class="part-img"/>
+          <p>Converts AC power to DC, ensuring stable power delivery to all components.</p>
+      </div>
+  </div>
+  <style>.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 20px; /* Adjusts spacing between columns and rows */
+    margin-top: 20px;
+}
+.part {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.part-img {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+h6 {
+  color: #444;
+  margin-bottom: 5px;
+}
+h5 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.containers {
+    width: 80%;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}.containers h6 {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.containers p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.containers ul {
+    padding-left: 20px;
+}
+
+.containers li {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+
+.safety-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.safety-content ul {
+    padding-left: 20px;
+    list-style-type: disc; /* Keeps bullets */
+    flex: 1;
+    text-align: center; /* Ensures only bullet points are left-aligned */
+}
+
+.safety-content li {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 8px;
+}
+
+.safety-image {
+    width: 150px;
+    height: auto;
+    margin-left: 0px;
+    border-radius: 0px;
+}
+
+.compatibility-content {
+    display: flex;
+    align-items: center; /* Centers image with text */
+}
+
+.compatibility-image {
+    width: 150px;
+    height: auto;
+    margin-right: 20px; /* Space between image and text */
+    border-radius: 8px;
+}
+
+.compatibility-content ul {
+    list-style-type: disc; /* Keeps bullets */
+    padding-left: 20px;
+}
+
+
+</style>
+</div>
+
+
+
+<div class="containers">
+  <h6>Finding Compatible Parts</h6>
+  <p>Choosing the right parts ensures a functional and optimized PC:</p>
+  <div class="safety-content">
+    <img src="{% static 'images/help2.png' %}" alt="Compatibility Guide" class="compatibility-image">
+    <ul>
+      <li><b>CPU & Motherboard</b> - Ensure the CPU socket matches the motherboard (e.g., Intel LGA1700 or AMD AM5).</li>
+      <li><b>RAM Compatibility</b> - Check motherboard support for DDR4 or DDR5 RAM.</li>
+      <li><b>Power Supply</b> - Ensure sufficient wattage for all components and 80+ efficiency rating.</li>
+      <li><b>Case & GPU Fit</b> - Verify that the GPU fits within the case dimensions.</li>
+      <li><b>Cooling Requirements</b> - High-performance CPUs may require aftermarket coolers or liquid cooling.</li>
+    </ul>
+  </div>
+</div>
+
+
+
+
+<div class="containers">
+  <h6>Safety Practices in PC Building</h6>
+  <p>Follow these precautions to protect both yourself and your PC components:</p>
+  <div class="safety-content">
+    <ul>
+      <li><b>Static Electricity Prevention</b> - Use an anti-static wrist strap or regularly ground yourself by touching metal.</li>
+      <li><b>Proper Workspace</b> - Build on a clean, non-conductive surface to avoid static buildup.</li>
+      <li><b>Handling Components</b> - Hold PC parts by the edges to avoid damaging sensitive circuits.</li>
+      <li><b>Correct Cable Management</b> - Avoid loose cables that may obstruct airflow or cause short circuits.</li>
+      <li><b>Thermal Paste Application</b> - Apply the right amount of thermal paste for CPU cooling efficiency.</li>
+      <li><b>Secure Component Installation</b> - Ensure RAM, GPU, and storage drives are properly seated in their slots.</li>
+      <li><b>First Power-On Check</b> - Test components outside the case (bench test) before final installation.</li>
+    </ul>
+    <img src="{% static 'images/help1.png' %}" alt="Safety Practices" class="safety-image">
+  </div>
+</div>
+
+<div class="containers">
+<h5>Types of PC Builds</h5>
+<p>Different builds serve different purposes. Choose based on your needs:</p>
+
+<div class="grid">
+    <!-- Budget Build -->
+    <div class="part">
+        <h6>Budget Build</h6>
+        <img src="{% static 'images/build1.png' %}" alt="Budget Build" class="part-img"/>
+        <p>Affordable components for basic tasks, office work, and light gaming.</p>
+    </div>
+
+    <!-- Mid-Tier Build -->
+    <div class="part">
+        <h6>Mid-Tier Build</h6>
+        <img src="{% static 'images/build2.png' %}" alt="Mid-Tier Build" class="part-img"/>
+        <p>A balance between price and performance, suitable for 1080p gaming and multitasking.</p>
+    </div>
+
+    <!-- High-End Build -->
+    <div class="part">
+        <h6>High-End Build</h6>
+        <img src="{% static 'images/build3.png' %}" alt="High-End Build" class="part-img"/>
+        <p>Top-tier hardware for 4K gaming, streaming, and demanding applications.</p>
+    </div>
+
+    <!-- Productivity Build -->
+    <div class="part">
+        <h6>Productivity Build</h6>
+        <img src="{% static 'images/build4.png' %}" alt="Productivity Build" class="part-img"/>
+        <p>Optimized for video editing, graphic design, and software development.</p>
+    </div>
+
+    <!-- AI/Computing Build -->
+    <div class="part">
+        <h6>AI/Computing Build</h6>
+        <img src="{% static 'images/build5.png' %}" alt="AI Computing Build" class="part-img"/>
+        <p>Designed for machine learning, AI model training, and data analysis.</p>
+    </div>
+
+    <!-- Server Build -->
+    <div class="part">
+        <h6>Server Build</h6>
+        <img src="{% static 'images/build6.jpg' %}" alt="Server Build" class="part-img"/>
+        <p>Used for hosting websites, databases, or enterprise applications.</p>
+    </div>
+</div></div>
+<!--ADD CONTENTS HERE-->
+<!--CHAT BOT CONTENTS HERE -->
+<!-- Ask Assistant Button --><br><br><br>
+<div class="containers">
+  <h5>PC Builder AI Assistant</h5>
+  <h6>Have any doubts? Ask our PC Builder AI Assistant for instant guidance and expert advice!</h6>
+
+<button class="ask-assistant-btn" onclick="toggleChatbox()">Ask Assistant</button>
+
+<!-- Chatbot Section (Initially Hidden) -->
+ 
+<section class="chatbot-container" id="chatbot-container" style="display: none;">
+  
+    <header class="chatbot-header">
+        <p>PC Builder AI Assistant</p>
+    </header>
+    <div class="chat-history" id="chat-history">
+        <!-- Chat history will appear here -->
+    </div>
+    <form id="chat-form" class="chat-form">
+        <input type="text" id="user-input" name="user_input" placeholder="Type your message here" />
+        <button type="submit" class="send-button">➤</button>
+    </form>
+</section>
+</div>
+<style>
+    /* Ask Assistant Button */
+    .ask-assistant-btn {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+        display: block;
+        margin: auto;
+    }
+
+    .ask-assistant-btn:hover {
+        background: #0056b3;
+    }
+
+    /* Center chatbot */
+    .chatbot-container {
+        width: 1000px;
+        background: #f4f4f4;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        margin: auto;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Header */
+    .chatbot-header {
+        font-size: 18px;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        background: #007bff;
+        color: white;
+        border-radius: 8px 8px 0 0;
+    }
+
+    /* Chat history */
+    .chat-history {
+        width: 100%;
+        height: 250px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        margin-bottom: 10px;
+    }
+
+    /* Chat message styles */
+    .message {
+        padding: 8px;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .user-message {
+        background: #007bff;
+        color: white;
+        text-align: right;
+    }
+
+    .bot-message {
+        background: #ddd;
+        text-align: left;
+    }
+
+    /* Chat input section */
+    .chat-form {
+        display: flex;
+        width: 100%;
+        gap: 5px;
+    }
+
+    /* Input box */
+    #user-input {
+        flex-grow: 1;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+
+    /* Modern Send Button */
+    .send-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    .send-button:hover {
+        background: #0056b3;
+    }
+</style>
+
+<script>
+    const username = "{{ user.username }}";
+
+    // Toggle Chatbox
+    function toggleChatbox() {
+        const chatbox = document.getElementById("chatbot-container");
+        chatbox.style.display = (chatbox.style.display === "none" || chatbox.style.display === "") ? "block" : "none";
+    }
+
+    // Handle form submission and send data to the server
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const userInput = document.getElementById('user-input').value;
+        fetch("{% url 'chatbot' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'user_input': userInput
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const chatHistory = document.getElementById('chat-history');
+            chatHistory.innerHTML += `
+                <div class="message user-message">
+                     <p><span style="color: white;">${username}</span>: ${data.user_input}</p>
+                </div>
+                <div class="message bot-message">
+                    <p><strong>PC Picker:</strong></p>
+                    <p>${data.ai_response}</p>
+                </div>
+            `;
+            document.getElementById('user-input').value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to latest message
+        });
+    });
+</script>
+
+
+<br><br><br>
+<!--CHAT BOT CONTENTS END HERE -->
+<!-- Page Footer-->
+      <div class="pre-footer-classic bg-gray-700 context-dark">
+        <div class="container">
+          <div class="row row-30 justify-content-lg-between">
+            <div class="col-sm-6 col-lg-3 col-xl-3">
+              <h5>Location</h5>
+              <ul class="list list-sm">
+                <li>
+                  <p>Thrissur</p>
+                </li>
+                <li>
+                  <p>Kerala</p>
+                </li>
+                <li>
+                  <p>680 501</p>
+                </li>
+                <li>
+                  <p>India</p>
+                </li>
+              </ul>
+            </div>
+            <div class="col-sm-6 col-lg-4 col-xl-3">
+              <h5>Contacts</h5>
+              <dl class="list-terms-custom">
+                <dt>Ph.</dt>
+                <dd><a class="link-default" href="tel:#">04885 296929</a></dd>
+              </dl>
+              <dl class="list-terms-custom">
+                <dt>Mail.</dt>
+                <dd><a class="link-default" href="mailto:#">iamalwinkj@gmail.com</a></dd>
+              </dl>
+              <ul class="list-inline list-inline-sm">
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-facebook" href="https://www.facebook.com/SoulRavanger/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-instagram" href="https://www.instagram.com/soul_ravager/"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-behance" href="https://x.com/Soul_Ravager"></a></li>
+                <li><a class="icon icon-sm icon-gray-filled icon-circle mdi mdi-twitter" href="https://x.com/Soul_Ravager"></a></li>
+              </ul>
+            </div>
+            <div class="col-lg-4">
+              <h5>Newsletter</h5>
+              <form class="rd-form rd-mailform" id="newsletter-form">
+                <div class="form-wrap form-wrap-icon">
+                    <div class="form-icon mdi mdi-email-outline"></div>
+                    <input class="form-input" id="footer-email" type="email" name="email" required>
+                    <label class="form-label" for="footer-email">E-mail</label>
+                </div>
+                <div class="button-wrap">
+                    <button class="button button-default button-invariable" type="submit">Subscribe</button>
+                </div>
+            </form>
+            <script>
+            document.getElementById("newsletter-form").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                let formData = new FormData(this);
+            
+                fetch("/newsletter-subscribe/", {  // Make sure this URL matches your Django URLs
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => console.error("Error:", error));
+            });
+            </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="section footer-classic context-dark text-center">
+        <div class="container">
+          <div class="row row-15 justify-content-lg-between">
+            <div class="col-lg-6 col-xl-6 text-lg-left">
+              <p class="rights"><span>&copy;&nbsp;</span><span class="copyright-year"></span>. All Rights Reserved. Design by <a href="https://www.facebook.com/SoulRavanger/">Alwin</a></p>
+            </div>
+            <div class="col-lg-6 col-xl-6">
+              <ul class="list-inline list-inline-lg text-uppercase">
+                <li><a href="http://alvispcpicker.local/about_us/">About us</a></li>
+                <li><a href="#">Our Team</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <div class="snackbars" id="form-output-global"></div>
+    <script src="{% static 'js/core.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>

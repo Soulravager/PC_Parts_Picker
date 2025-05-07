@@ -1,0 +1,53 @@
++Chatbot with Google Ai (🚨🚨🚨NOTE current models will be discontinue on march 27th🚨🚨🚨)
++Parts Page	
++Reviews
++favorites 
+*fixed-signin (signin was tokens were missing)
++added favorite in profile 
++Added Build Help page 
+	>with guide
+	>with add AI Assistant	   
+
+>Modify HTML "styles" 
++ Staff Dashboard 
+		>>edit/remove Parts
+		>>add Parts
+*fixed contacts page not loading (cause unknown )
+*Fixed pc builder compatibility issues in motherboards (motherboards list did't load to cpu)
+
+>Modify the landing of the index page
+
++ Staff tag in profiles 
++added User Rating with dynamic User Rating of Parts
+
++ADD External links to amazon flip  in "PARTS PAGE"  with models (!!!!!!NOTE:>> NEED TO ADD SITES AND clickable  links)⭐
+*Fixed styles of PC picker >css/styles.css (increased font size 15 to 18 px)
+*Fixed Fonts (not in uppercase) of staff page
+*Fixed JS in builder
++ADD Overlay model in builder
++ADD watts estimation total and per Parts
++ADD External SHARE LINKS OF BUILDS  based on build model
++ADD shared-builds PAGE 
+*Temp fix builder page new letters 
++ADD DEDICATED PARTS Details  PAGE
++ADD TELEGRAM BOT 
++ADD ADMIN CONTACT TELEGRAM
++ADD External links to amazon flip  in "PARTS PAGE" 
++Add to cart, buying parts
++ADD Reports 
++ADD NEW UI FOR REPORTS AND STAFF Dashboard
++ADD ADDRESS in profile with DELIVERY ADDRESS 
+
+🚨NOTE///--🚨
+
+>ADD External links to guides in "BUILD HELP PAGE" 
+>ADD PRE-BUILD PCs
+>ADD Monitors, accessory's, accessory's(keyboard,mouse,headphone,etc)
+
+
+#TO RUN
+#>>> 
+'''
+            python manage.py run_telegram_bot
+
+'''

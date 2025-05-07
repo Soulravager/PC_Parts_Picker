@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        /* From Uiverse.io by JkHuger */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 350px;
+            width: 300px;
+            flex-direction: column;
+            gap: 20px;
+            background: #e3e3e3;
+            box-shadow: 16px 16px 32px #c8c8c8, -16px -16px 32px #fefefe;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .register {
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            font-size: x-large;
+        }
+
+        .inputBox {
+            position: relative;
+            width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .inputBox input {
+            width: 100%;
+            padding: 10px;
+            outline: none;
+            border: none;
+            font-size: 1em;
+            background: transparent;
+            border-left: 2px solid #000;
+            border-bottom: 2px solid #000;
+            transition: 0.1s;
+            border-bottom-left-radius: 8px;
+        }
+
+        .inputBox span {
+            position: absolute;
+            left: 0;
+            transform: translateY(-4px);
+            margin-left: 10px;
+            padding: 10px;
+            pointer-events: none;
+            font-size: 12px;
+            color: #000;
+            text-transform: uppercase;
+            transition: 0.5s;
+            letter-spacing: 3px;
+            border-radius: 8px;
+        }
+
+        .inputBox input:focus ~ span,
+        .inputBox input:valid ~ span {
+            transform: translateX(120px) translateY(-15px);
+            font-size: 0.8em;
+            padding: 5px 10px;
+            background: #000;
+            color: #fff;
+        }
+
+        .inputBox input:focus,
+        .inputBox input:valid {
+            border: 2px solid #000;
+            border-radius: 8px;
+        }
+
+        .enter {
+            height: 45px;
+            width: 100px;
+            border-radius: 5px;
+            border: 2px solid #000;
+            cursor: pointer;
+            background-color: transparent;
+            transition: 0.5s;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        .enter:hover {
+            background-color: black;
+            color: white;
+        }
+
+        .sign-up-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .sign-up-container a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .sign-up-container a:hover {
+            color: #573b8a;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <a class="register">Sign Up</a>
+
+            <form id="signupForm" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <!-- Error Message -->
+                <div id="error-message" class="error-message">
+                    Passwords do not match.
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="enter">Sign Up</button>
+            </form>
+
+            <div class="sign-up-container">
+                <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password match validation logic
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            var password = document.getElementById('id_password1').value;
+            var confirmPassword = document.getElementById('id_password2').value;
+            var errorMessage = document.getElementById('error-message');
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                event.preventDefault();  
+            } else {
+                errorMessage.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>
