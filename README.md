@@ -36,6 +36,17 @@ A powerful and user-friendly web platform designed to simplify custom PC buildin
 | **Payment**  | Secure payment gateway integration |
 
 ---
+> **Note:** This project uses **Pipenv** for environment management.  
+Install Pipenv using:  
+```bash
+pip install pipenv
+```
+
+Then, make sure to select the Python interpreter from:  
+**`Reso/VirtualEnv/pcbil-Ytv6DgeR`**  
+(Extracted from `pcbil-Ytv6DgeR.rar`)
+
+---
 
 ## 📷 Screenshots
 
